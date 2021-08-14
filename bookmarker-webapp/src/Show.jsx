@@ -16,7 +16,8 @@ type Props = {
 
 function Show(props: Props): Node {
   let { id } = useParams();
-  const bookmark = props.bookmarks.get(parseInt(id));
+  let bookmarkId = parseInt(id);
+  const bookmark = props.bookmarks.get(bookmarkId);
   if (bookmark == null) {
     return <h3>This bookmark does not exist!</h3>;
   }
@@ -33,11 +34,11 @@ function Show(props: Props): Node {
         {bookmark.notes}
       </p>
 
-      <div className="row">
-        <div className="three columns">
+      <div class="row">
+        <div style={{display: "inline", paddingRight: "10px"}}>
           <Link className="button" to={`/edit/${bookmark.id}`}>Edit</Link>
         </div>
-        <div className="three columns">
+        <div style={{display: "inline", paddingRight: "10px"}}>
           <Link className="button" to={`/delete/${bookmark.id}`}>Delete</Link>
         </div>
       </div>

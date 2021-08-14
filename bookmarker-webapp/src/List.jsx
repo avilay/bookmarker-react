@@ -13,11 +13,18 @@ type Bookmark = {
 };
 
 type Props = {
-  bookmarks: Map<number, Bookmark>
+  currentQuery: string,
+  bookmarks: Map<number, Bookmark>,
+  searchBookmarks(string): void
 };
 
 function List(props: Props): Node {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(props.currentQuery);
+
+  function searchClick(e) {
+    e.preventDefault();
+    props.searchBookmarks(searchQuery);
+  }
 
   const bookmarks = [...props.bookmarks.values()].map((bookmark) => {
     return (
@@ -40,7 +47,7 @@ function List(props: Props): Node {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button>Search</button>
+            <button onClick={searchClick}>Search</button>
           </div>
         </div>
       </form>

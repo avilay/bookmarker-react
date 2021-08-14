@@ -2,8 +2,8 @@
 
 import React from "react";
 import type { Node } from "react";
-import { useParams, useHistory } from "react-router-dom";
 import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 type Bookmark = {
   id: number,
@@ -13,22 +13,24 @@ type Bookmark = {
 };
 
 type Props = {
-  bookmarks: Map<number, Bookmark>,
-  editBookmark(Bookmark): void
-};
+  addBookmark(Bookmark): void
+}
 
-function Edit(props: Props): Node {
-  let { id } = useParams();  // have to use this variable name otherwise useParams does not work
-  const bookmarkId = parseInt(id);
-  const bookmark = props.bookmarks.get(bookmarkId);
-
-  const [title, setTitle] = useState(bookmark?.title);
-  const [url, setUrl] = useState(bookmark?.url);
-  const [notes, setNotes] = useState(bookmark?.notes);
+function Add(props: Props): Node {
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [notes, setNotes] = useState("");
   let history = useHistory();
 
-  if (bookmark == null) {
-    return (<h3>This bookmark does not exist!</h3>);
+  function addClick(e) {
+    e.preventDefault();
+    props.addBookmark({
+      id: 0,
+      title: title,
+      url: url,
+      notes: notes
+    });
+    history.replace({pathname: "/"});
   }
 
   function cancelClick(e) {
@@ -36,21 +38,9 @@ function Edit(props: Props): Node {
     history.goBack();
   }
 
-  function saveClick(e) {
-    e.preventDefault();
-    console.log("Saving edits");
-    props.editBookmark({
-      id: bookmarkId,
-      title: ((title: any): string),
-      url: ((url: any): string),
-      notes: ((notes: any): string)
-    })
-    history.goBack();
-  }
-
   return (
     <div className="container" style={{paddingTop: "1%"}}>
-      <h3>Edit Bookmark</h3>
+      <h3>Add Bookmark</h3>
 
       <form>
         <label>Title</label>
@@ -82,9 +72,9 @@ function Edit(props: Props): Node {
             <input
               className="button-primary"
               type="submit"
-              value="Save"
+              value="Add"
               style={{display: "inline"}}
-              onClick={saveClick}
+              onClick={addClick}
             />
           </div>
           <div style={{display: "inline", paddingRight: "10px"}}>
@@ -97,10 +87,9 @@ function Edit(props: Props): Node {
             />
           </div>
         </div>
-
       </form>
     </div>
   );
 }
 
-export { Edit };
+export { Add };
