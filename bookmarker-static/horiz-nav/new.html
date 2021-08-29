@@ -11,13 +11,25 @@
 
     <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
 
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="../css/skeleton.css">
+    <link rel="stylesheet" href="../css/bookmarker.css">
     <title>React App</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root">
+      <nav>
+        <div class="container">
+          <div class="row">
+            <div class="three columns brand"><a href="#">Bookmarker</a></div>
+            <div class="three columns menu"><a href="#">Bookmarks</a></div>
+            <div class="three columns menu"><a href="#">Collections</a></div>
+            <div class="three columns menu active"><a href="new.html">Add Bookmark</a></div>
+          </div>
+        </div>
+      </nav>
+
       <div class="container" style="padding-top: 1%">
         <h3>New Bookmark</h3>
         <form>
