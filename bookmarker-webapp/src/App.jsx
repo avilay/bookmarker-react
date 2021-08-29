@@ -1,7 +1,6 @@
 // @flow
-import "./normalize.css";
-import "./skeleton.css";
-import "./bookmarker.css";
+import "./bulma.min.css";
+import "./custom.css";
 import React from "react";
 import { useState, useEffect } from "react";
 import type {Node} from "react"
@@ -11,10 +10,10 @@ import {
   Switch,
   Link
 } from "react-router-dom";
+import { Navigation } from "./Navigation";
 import { List } from "./List";
 import { Show } from "./Show";
 import { Edit } from "./Edit";
-import { Delete } from "./Delete";
 import { Add } from "./Add";
 
 function App(): Node {
@@ -83,20 +82,11 @@ function App(): Node {
 
   return (
     <Router>
-      <nav>
-        <div className="container">
-          <div className="row">
-            <div className="three columns brand">Bookmarker</div>
-            <div className="three columns menu"><Link to="/list">Bookmarks</Link></div>
-            <div className="three columns menu"><Link to="/add">Add Bookmark</Link></div>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
       <Switch>
         <Route path="/list"><List bookmarks={bookmarks} searchBookmarks={searchBookmarks} currentQuery={currentQuery} /></Route>
-        <Route path="/show/:id"><Show bookmarks={bookmarks} /></Route>
+        <Route path="/show/:id"><Show bookmarks={bookmarks} deleteBookmark={deleteBookmark} /></Route>
         <Route path="/edit/:id"><Edit bookmarks={bookmarks} editBookmark={editBookmark} /></Route>
-        <Route path="/delete/:id"><Delete bookmarks={bookmarks} deleteBookmark={deleteBookmark} /></Route>
         <Route path="/add"><Add addBookmark={addBookmark} /></Route>
         <Route path="/"><List bookmarks={bookmarks} searchBookmarks={searchBookmarks} currentQuery={currentQuery} /></Route>
       </Switch>

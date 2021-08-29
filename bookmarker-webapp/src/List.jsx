@@ -23,37 +23,53 @@ function List(props: Props): Node {
 
   function searchClick(e) {
     e.preventDefault();
+    console.log("inside searchClick");
     props.searchBookmarks(searchQuery);
   }
 
   const bookmarks = [...props.bookmarks.values()].map((bookmark) => {
     return (
-      <div key={bookmark.id.toString()} className="row" style={{paddingBottom: "15px"}}>
+      <article key={bookmark.id.toString()} className="block">
         <Link to={`/show/${bookmark.id}`}>{bookmark.title}</Link>
-      </div>
+      </article>
     );
   });
 
   return (
-    <div className="container" style={{paddingTop: "1%"}}>
-      <h1>Bookmarks</h1>
+    <section className="section">
+      <div className="container">
+        {/* header */}
+        <div className="level">
+          <div className="level-left">
+            {/** title */}
+            <div className="level-item">
+              <h1 className="title">Bookmarks</h1>
+            </div>
+            {/** end title */}
 
-      <form>
-        <div className="row">
-          <div className="two-thirds column">
-            <input
-              style={{display: "inline", width: "60%"}}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button onClick={searchClick}>Search</button>
+            {/** search box */}
+            <div className="level-item">
+              <div className="field has-addons">
+                <p className="control">
+                  <input
+                    className="input"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)} />
+                </p>
+                <p className="control">
+                  <button className="button is-info is-light is-outlined" onClick={searchClick}>Search</button>
+                </p>
+              </div>
+            </div>
+            {/** end search box */}
           </div>
         </div>
-      </form>
+        {/* end header */}
 
-      {bookmarks}
-    </div>
+        {bookmarks}
+      </div>
+    </section>
   );
 }
 
