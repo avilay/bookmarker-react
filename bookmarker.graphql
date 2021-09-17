@@ -1,0 +1,39 @@
+scalar DateTime
+
+type Bookmark {
+  id: ID!
+  url: String!
+  title: String
+  createdAt: DateTime
+  text: String!
+}
+
+interface Exception {
+  code: Int
+  message: String
+}
+
+type BookmarkNotFound implements Exception {
+  code: Int
+  message: String
+  badBookmarkId: ID
+}
+
+type InvalidUrl implements Exception {
+  code: Int
+  message: String
+  badUrl: String
+}
+
+union BookmarkResponse = Bookmark | BookmarkNotFound
+
+type Query {
+  bookmarks: [Bookmark]
+  bookmark(id: ID!): BookmarkResponse
+}
+
+union AddBookmarkResponse = Bookmark | InvalidUrl
+
+type Mutation {
+  addBookmark(url: String!, title: String): AddBookmarkResponse
+}
