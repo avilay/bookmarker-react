@@ -1,20 +1,35 @@
 query {
-  bookmarks{
+  bookmarks {
     id
-    url
     title
-    createdAt
+    url
+    toRead {
+      isImportant
+      isUrgent
+    }
+    notes {
+      createdAt
+      contents
+    }
   }
 }
 
+
 query {
-  bookmark(id: "8zaXGHxD53GdCLu7Bcs2X6") {
+  bookmark(id: 2){
     __typename
     ... on Bookmark {
       id
-      url
       title
-      createdAt
+      url
+      toRead {
+        isImportant
+        isUrgent
+      }
+      notes {
+        createdAt
+        contents
+      }
     }
     ... on Exception {
       code
@@ -23,20 +38,33 @@ query {
   }
 }
 
+
 # Trye the below mutation with the following urls -
 # https://avilay.rocks => should work (try with and without a title)
 # https://httpbin.org/status/404 => InvalidUrl
 # https://example.uri => InvalidUrl
 mutation {
   addBookmark(
-    url: "https://avilay.rocks",
-    title: "My Random Thoughts") {
+    url: "https://avilay.rocks"
+    title: "My Random Thoughts"
+    isUrgent: true
+    isImportant: true
+    notes: "Some notes here"
+  ) {
       __typename
       ... on Bookmark {
         id
         url
         title
-        createdAt
+        url
+        toRead {
+          isImportant
+          isUrgent
+        }
+        notes {
+          createdAt
+          contents
+        }
       }
       ... on Exception {
         code

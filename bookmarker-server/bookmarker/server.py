@@ -8,13 +8,17 @@ from ariadne import (
     load_schema_from_path,
     make_executable_schema,
     resolve_to,
+    convert_kwargs_to_snake_case,
 )
 from ariadne.asgi import GraphQL
 
+from bookmarker.model import Bookmark, ToRead
 import bookmarker.data as data
 
 query = QueryType()
 bookmark = ObjectType("Bookmark")
+note = ObjectType("Note")
+to_read = ObjectType("ToRead")
 bookmark_response = UnionType("BookmarkResponse")
 mutation = MutationType()
 add_bookmark_response = UnionType("AddBookmarkResponse")
@@ -27,16 +31,23 @@ class BookmarkNotFound:
     bad_bookmark_id: str
 
 
+@dataclass
+class InvalidUrl:
+    code: str
+    message: str
+    bad_url: str
+
+
 @query.field("bookmarks")
 def resolve_bookmarks(*_):
-    return list(data.bookmarks.values())
+    return data.bookmarks()
 
 
 @query.field("bookmark")
 def resolve_boomark(*_, id):
-    if id in data.bookmarks:
-        return data.bookmarks.get(id, None)
-    else:
+    try:
+        return data.bookmark(id)
+    except IndexError:
         return BookmarkNotFound(
             code=-1, message="Bookmark not in database", bad_bookmark_id=id
         )
@@ -47,19 +58,46 @@ def resolve_bookmark_response_type(obj, *_):
     return type(obj).__name__
 
 
-resolve_to("id")(data.Bookmark, None)
-resolve_to("url")(data.Bookmark, None)
-resolve_to("title")(data.Bookmark, None)
+resolve_to("id")(Bookmark, None)
+resolve_to("url")(Bookmark, None)
+resolve_to("title")(Bookmark, None)
+resolve_to("notes")(Bookmark, None)
+resolve_to("isImportant")(ToRead, None)
+resolve_to("isUrgent")(ToRead, None)
 
 
-@bookmark.field("createdAt")
-def resolve_created_at(bookmark, _):
-    return str(bookmark.created_at)
+@bookmark.field("toRead")
+def resolve_to_read(bookmark, _):
+    return bookmark.to_read
+
+
+@to_read.field("isUrgent")
+def resolve_is_urgent(tr, _):
+    return tr.is_urgent
+
+
+@to_read.field("isImportant")
+def resolve_is_important(tr, _):
+    return tr.is_important
+
+
+@note.field("createdAt")
+def resolve_created_at(note, _):
+    return str(note.created_at)
+
+
+@note.field("contents")
+def resolve_contents(note, _):
+    # return " ".join(note.contents)
+    return note.contents
 
 
 @mutation.field("addBookmark")
-def resolve_add_bookmark(*_, url, title=None):
-    return data.add_bookmark(url, title)
+@convert_kwargs_to_snake_case
+def resolve_add_bookmark(
+    *_, url, title=None, is_important=False, is_urgent=False, notes=""
+):
+    return data.add_bookmark(url, title, is_important, is_urgent, notes)
 
 
 @add_bookmark_response.type_resolver
@@ -70,7 +108,14 @@ def resolve_add_bookmark_response_type(obj, *_):
 def start():
     typedefs = load_schema_from_path("../bookmarker.graphql")
     schema = make_executable_schema(
-        typedefs, query, bookmark, bookmark_response, mutation, add_bookmark_response
+        typedefs,
+        query,
+        bookmark,
+        note,
+        to_read,
+        bookmark_response,
+        mutation,
+        add_bookmark_response,
     )
     return GraphQL(schema, debug=True)
 
